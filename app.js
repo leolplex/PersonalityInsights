@@ -4,16 +4,15 @@ const ejs = require('ejs');
 const path = require('path');
 const bodyParser = require('body-parser');
 
-
 var PersonalityInsightsV3 = require('watson-developer-cloud/personality-insights/v3');
 var fs = require('fs');
 var Estructurador = require('./Estructurador');
 
 //set IBM cloud credentials in this section
 var personalityInsights = new PersonalityInsightsV3({
-  version_date: '2017-10-13',
+  version_date: '2020-05-23',
   username: '',
-  password: ''
+  password: '',
 });
 
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
@@ -29,21 +28,22 @@ app.use(express.static('./public'));
 app.get('/', (req, res) => res.render('index'));
 
 app.get('/upload', (req, res) => {
-res.render('upload', {qs: req.query});
+  res.render('upload', { qs: req.query });
 });
 var x;
-app.post('/upload', urlencodedParser ,(req, res) => {
+app.post('/upload', urlencodedParser, (req, res) => {
   //here we already have req.body data
   // console.log(req.body);
   // console.log(typeof req.body);
   // console.log(JSON.stringify(req.body));
   // console.log(typeof JSON.stringify(typeof req.body));
 
-var cont = JSON.stringify(req.body.p1 + req.body.p2 + req.body.p3 + req.body.p4 + req.body.p5);
+  var cont = JSON.stringify(
+    req.body.p1 + req.body.p2 + req.body.p3 + req.body.p4 + req.body.p5
+  );
 
-
-var audaciaN;
-console.log(cont);
+  var audaciaN;
+  console.log(cont);
   var profileParams = {
     // Get the content from the JSON file.
 
@@ -52,44 +52,64 @@ console.log(cont);
     consumption_preferences: true,
     content_language: 'es',
     accept_language: 'es',
-    raw_scores: true
+    raw_scores: true,
   };
-  personalityInsights.profile(profileParams, function(error, profile) {
-  if (error) {
-    console.log(error);
-  } else {
-    //console.log(JSON.stringify(profile, null, 2));
-    x = profile;
-    var audaciaN = JSON.stringify(x.personality[0].children[0].name, null, 2);
-    var audaciaP = JSON.stringify(x.personality[0].children[0].percentile, null, 2);
-    var inAr = JSON.stringify(x.personality[0].children[1].name, null, 2);
-    var inArP = JSON.stringify(x.personality[0].children[1].percentile, null, 2);
-    var emocional = JSON.stringify(x.personality[1].children[2].name, null, 2);
-    var emocionalP = JSON.stringify(x.personality[1].children[2].percentile, null, 2);
-    var imagin = JSON.stringify(x.personality[0].children[3].name, null, 2);
-    var imaginP = JSON.stringify(x.personality[0].children[3].percentile, null, 2);
-    var intelec = JSON.stringify(x.personality[0].children[4].name, null, 2);
-    var intelecP = JSON.stringify(x.personality[0].children[4].percentile, null, 2);
-    var y=Estructurador.cleansing(x);
-    console.log(y);
-
-  }
-  res.render('profile', {
-  au: audaciaN,
-  aup: audaciaP,
-  inar: inAr,
-  inarp: inArP,
-  emo: emocional,
-  emoP:emocionalP,
-  ima:imagin,
-  imaP:imaginP,
-  inte:intelec,
-  intep:intelecP
-
-    });//este es el view que se carga
-});
-
-
+  personalityInsights.profile(profileParams, function (error, profile) {
+    if (error) {
+      console.log(error);
+    } else {
+      //console.log(JSON.stringify(profile, null, 2));
+      x = profile;
+      var audaciaN = JSON.stringify(x.personality[0].children[0].name, null, 2);
+      var audaciaP = JSON.stringify(
+        x.personality[0].children[0].percentile,
+        null,
+        2
+      );
+      var inAr = JSON.stringify(x.personality[0].children[1].name, null, 2);
+      var inArP = JSON.stringify(
+        x.personality[0].children[1].percentile,
+        null,
+        2
+      );
+      var emocional = JSON.stringify(
+        x.personality[1].children[2].name,
+        null,
+        2
+      );
+      var emocionalP = JSON.stringify(
+        x.personality[1].children[2].percentile,
+        null,
+        2
+      );
+      var imagin = JSON.stringify(x.personality[0].children[3].name, null, 2);
+      var imaginP = JSON.stringify(
+        x.personality[0].children[3].percentile,
+        null,
+        2
+      );
+      var intelec = JSON.stringify(x.personality[0].children[4].name, null, 2);
+      var intelecP = JSON.stringify(
+        x.personality[0].children[4].percentile,
+        null,
+        2
+      );
+      var y = Estructurador.cleansing(x);
+      console.log(y);
+    }
+    res.render('profile', {
+      au: audaciaN,
+      aup: audaciaP,
+      inar: inAr,
+      inarp: inArP,
+      emo: emocional,
+      emoP: emocionalP,
+      ima: imagin,
+      imaP: imaginP,
+      inte: intelec,
+      intep: intelecP,
+    }); //este es el view que se carga
+  });
 });
 
 const port = 8080;
